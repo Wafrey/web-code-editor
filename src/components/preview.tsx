@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import './preview.css';
 
 interface PreviewProps {
   code: string;
@@ -7,22 +8,23 @@ interface PreviewProps {
 const html = `
   <html>
     <head>
-      <body>
-        <div id="root">
-          <script>
-            window.addEventListener('message', (event)=> {
-              try {
-                eval(event.data);
-              } catch (err) {
-                const root = document.querySelector('#root');
-                root.innerHTML = '<div style="color: red;"><h4>Runtime Error</h4>' + err + '</div>'
-                console.log(err);
-              }
-            }, false);
-          </script> 
-        </div>
-      </body>
+      <style>html { background-color: white; }</style>
     </head>
+    <body>
+    <div id="root">
+      <script>
+        window.addEventListener('message', (event)=> {
+          try {
+            eval(event.data);
+          } catch (err) {
+            const root = document.querySelector('#root');
+            root.innerHTML = '<div style="color: red;"><h4>Runtime Error</h4>' + err + '</div>'
+            console.log(err);
+          }
+        }, false);
+      </script> 
+    </div>
+  </body>
   </html>
   `;
 
@@ -34,12 +36,14 @@ const Preview: React.FC<PreviewProps> = ({ code }) => {
     iframe.current.contentWindow.postMessage(code, '*');
   }, [code]);
   return (
-    <iframe
-      ref={iframe}
-      title='preview'
-      sandbox='allow-scripts'
-      srcDoc={html}
-    />
+    <div className='preview-wrapper'>
+      <iframe
+        ref={iframe}
+        title='preview'
+        sandbox='allow-scripts'
+        srcDoc={html}
+      />
+    </div>
   );
 };
 
